@@ -1,0 +1,18 @@
+from django.contrib import admin
+from .models import Order, OrderItem, CartItem
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    readonly_fields = ['product', 'quantity', 'price']
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'status', 'total', 'created_at']
+    list_filter = ['status']
+    search_fields = ['user__email', 'payment_intent_id']
+    inlines = [OrderItemInline]
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'quantity', 'added_at']
