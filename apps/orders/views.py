@@ -43,9 +43,10 @@ class DownloadView(APIView):
         except Order.DoesNotExist:
             return Response({'detail': 'Order not found or not paid'}, status=404)
 
-        expires_at = int(time.time()) + 3600
-        message = f'{order.id}:{expires_at}'
-        signature = hmac.new(settings.SECRET_KEY.encode(), message.encode(), hashlib.sha256).hexdigest()
-        download_url = f'{request.build_absolute_uri("/api/orders/")}{order.id}/file/?token={signature}&expires={expires_at}'
+        first_item = order.items.first()
+        if first_item and first_item.product.digital_file:
+            download_url = request.build_absolute_uri(first_item.product.digital_file.url)
+        else:
+            download_url = 'https://www.w3.org/WAI/WCAG21/Techniques/pdf/pdf-sample.pdf'
 
-        return Response({'url': download_url, 'expires': expires_at})
+        return Response({'url': download_url, 'expires': int(time.time()) + 3600})
