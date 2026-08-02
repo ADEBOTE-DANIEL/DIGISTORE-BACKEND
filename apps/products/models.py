@@ -23,7 +23,7 @@ class Product(models.Model):
     file_size = models.CharField(max_length=50, default='Unknown')
     file_type = models.CharField(max_length=50, default='ZIP')
 
-    thumbnail = models.ImageField(upload_to='products/thumbnails/')
+    thumbnail = models.URLField(max_length=500)
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
